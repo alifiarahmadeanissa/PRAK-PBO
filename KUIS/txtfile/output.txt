@@ -1,8 +1,8 @@
-email = ueueue@upnyk.ac.id
-username = ueuue
-password = ueueueue
-nama = eeueuue
-Jenis Kelamin = Perempuan
-TTL = hheheh, 12
-asal = ueueu
-cerita = heeyeyeye
+email = @upnyk.ac.id
+username = 
+password = 
+nama = 
+Jenis Kelamin = Laki-Laki
+TTL = , 
+asal = 
+cerita = 

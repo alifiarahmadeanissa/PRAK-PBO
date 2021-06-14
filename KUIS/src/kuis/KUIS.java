@@ -1,9 +1,11 @@
 
 package kuis;
 
+import java.awt.FlowLayout;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
+import java.sql.*;
 
 
 
@@ -12,7 +14,8 @@ public class KUIS {
 
     public static void main(String[] args) 
    {
-	GUI gui = new GUI();
+        Connector connector = new Connector();
+        GUI gui = new GUI();
    }
 }
 
@@ -41,6 +44,7 @@ class GUI extends JFrame implements ActionListener
     
     JButton btntampilkan = new JButton("Tampilkan");
     JButton btnsimpan = new JButton("Simpan");
+    JButton btnlihat = new JButton("Lihat");
     
     public GUI() 
    {
@@ -70,6 +74,7 @@ class GUI extends JFrame implements ActionListener
         add(lkisah);
         add(btntampilkan);
         add(btnsimpan);
+        add(btnlihat);
         
         femail.setBounds(200,10,150,20);
 	lemail.setBounds(10,10,120,20);
@@ -90,8 +95,9 @@ class GUI extends JFrame implements ActionListener
         ldom.setBounds(10,150,120,20);
         fkisah.setBounds(200,170,150,80);
         lkisah.setBounds(10,170,120,20);
-        btntampilkan.setBounds(150,300,100,20);
-        btnsimpan.setBounds(270,300,100,20);
+        btntampilkan.setBounds(80,300,100,20);
+        btnsimpan.setBounds(170,300,100,20);
+        btnlihat.setBounds(230,300,100,20);
         
         rlaki.setMnemonic(KeyEvent.VK_C);
         rpr.setMnemonic(KeyEvent.VK_M);
@@ -100,6 +106,7 @@ class GUI extends JFrame implements ActionListener
         setVisible(true);
         btntampilkan.addActionListener(this);
         btnsimpan.addActionListener(this);
+        btnlihat.addActionListener(this);
         
 }
     @Override
@@ -119,8 +126,12 @@ class GUI extends JFrame implements ActionListener
         String date = fdate.getText();
         String dom = fdom.getText();
         String kisah = fkisah.getText();
-       
-                
+        String DBurl = "jdbc:mysql://localhost/biodata?serverTimezone=UTC";
+        String DBusername = "root";
+        String DBpassword = "fia";
+        Connection koneksi = null;
+        Statement statement;
+              
         if(e.getSource() == btntampilkan)
             {
             if(email.contains("@upnyk.ac.id"))
@@ -163,16 +174,40 @@ class GUI extends JFrame implements ActionListener
                 String path = "C:\\Users\\ASUS\\Documents\\NetBeansProjects\\KUIS\\txtfile\\output.txt";
                 try {
                     FileWriter fw = new FileWriter(path);
-                    BufferedWriter bw = new BufferedWriter(fw);
-                    bw.write(teks);
-                    bw.close();
+                    try (BufferedWriter bw = new BufferedWriter(fw)) {
+                        bw.write(teks);
+                    }
                 } catch (IOException f)
                 {}
-                
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            koneksi = DriverManager.getConnection(DBurl,DBusername,DBpassword);
+            statement = koneksi.createStatement();
+            String query ="insert into biodata values ('"+ email + "','" + username + "','" + password+ "','"+ nama + "','" +JenKel + "','" + tl+ "','"+date + "','" +dom+ "','" + kisah+ "')";
+            statement.executeUpdate(query);
+            JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan!", "Hasil",JOptionPane.INFORMATION_MESSAGE);            
+            statement.close();
+            koneksi.close();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan!", "Hasil", JOptionPane.ERROR_MESSAGE);
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "Driver Tidak Ditemukan!", "Hasil", JOptionPane.ERROR_MESSAGE);
+        }
                 }
             }
             else 
             {JOptionPane.showMessageDialog(null,"Email harus email upnyk");}
         }
-    }
+        
+        else if(e.getSource() == btnlihat)
+            {  
+               LihatData lihatdata = new LihatData();
+            }
 }
+}
+    
+    
+    
+
+
